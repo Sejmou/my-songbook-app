@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "eb37296c-489c-4ffb-b1b1-bd6dc86262c7"
+      }
+    },
+    "owner": "sejmou"
   }
 }
