@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useCurrentSong, useSongStore } from '../store';
 import CheckboxInput from './CheckboxInput';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { MainHeading, RegularText, SubHeading } from './typography';
 import classNames from 'classnames';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import PageHeader from './PageHeader';
 
 type Props = {
   className?: string;
@@ -12,7 +12,6 @@ type Props = {
 
 const CurrentSong = (props: Props) => {
   const currentSong = useCurrentSong();
-  const setCurrentView = useSongStore(state => state.setCurrentView);
 
   const lyricBlocks = useMemo(
     () =>
@@ -37,17 +36,9 @@ const CurrentSong = (props: Props) => {
   }
 
   return (
-    <View className={props.className}>
-      <View className="flex flex-row items-center">
-        <TouchableOpacity
-          className="w-8 h-8 mx-4"
-          onPress={() => setCurrentView('songs')}
-        >
-          <View>
-            <Ionicons name="md-arrow-back-outline" size={32} color="gray" />
-          </View>
-        </TouchableOpacity>
-        <View className="mb-4 flex flex-col">
+    <View className="flex h-full">
+      <PageHeader>
+        <View className="flex flex-col">
           <MainHeading>{currentSong.title || 'No Title'}</MainHeading>
           <SubHeading>
             by{' '}
@@ -56,9 +47,14 @@ const CurrentSong = (props: Props) => {
             </Text>
           </SubHeading>
         </View>
+      </PageHeader>
+      <View className="mt-4">
+        <SectionHeadingsCheckbox />
       </View>
-      <SectionHeadingsCheckbox />
-      <View className="flex flex-col mt-4">
+      <ScrollView
+        className="flex flex-col mt-4 overflow-scroll flex-1 mb-4"
+        bounces={false}
+      >
         {lyricBlocks.map((b, i) => (
           <View
             key={i}
@@ -78,7 +74,7 @@ const CurrentSong = (props: Props) => {
             )}
           </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
