@@ -1,0 +1,55 @@
+Arguments: 
+  /usr/local/bin/node /Users/sejmou/.cache/node/corepack/yarn/1.22.19/bin/yarn.js install
+
+PATH: 
+  /opt/homebrew/anaconda3/bin:/opt/homebrew/anaconda3/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/sejmou/.fig/bin:/Users/sejmou/.local/bin:/opt/homebrew/anaconda3/bin:/usr/local/mysql-8.0.33-macos13-arm64/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.16.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:107:26)
+
+npm manifest: 
+  {
+    "name": "my-songbook",
+    "version": "1.0.0",
+    "scripts": {
+      "start": "expo start --dev-client",
+      "android": "expo run:android",
+      "ios": "expo run:ios",
+      "web": "expo start --web"
+    },
+    "dependencies": {
+      "@motiz88/react-native-midi": "^0.0.5",
+      "@react-native-community/checkbox": "^0.5.15",
+      "@types/react": "~18.0.27",
+      "expo": "~48.0.15",
+      "expo-splash-screen": "~0.18.2",
+      "expo-status-bar": "~1.4.4",
+      "formik": "^2.2.9",
+      "nativewind": "^2.0.11",
+      "react": "18.2.0",
+      "react-native": "0.71.7",
+      "typescript": "^4.9.4",
+      "zustand": "^4.3.8"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.20.0",
+      "tailwindcss": "^3.3.2"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
