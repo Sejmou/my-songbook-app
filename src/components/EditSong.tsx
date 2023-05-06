@@ -1,25 +1,40 @@
-import { View, Button, ScrollView } from 'react-native';
+import { View, Button, Text, ScrollView, Alert } from 'react-native';
 import { Formik } from 'formik';
-import { useSongStore } from '../store';
+import { useCurrentSong, useSongStore } from '../store';
 import CustomTextInput from './CustomTextInput';
-import { Alert } from 'react-native';
 import { MainHeading } from './typography';
 import PageHeader from './PageHeader';
 
-const AddSong = () => {
-  const addSong = useSongStore(state => state.addSong);
+const EditSong = () => {
+  const updateSong = useSongStore(state => state.updateSong);
+  const currentSong = useCurrentSong();
   const setCurrentView = useSongStore(state => state.setCurrentView);
+  if (!currentSong) {
+    return (
+      <View>
+        <Text>Something went wrong - could not find song!</Text>{' '}
+        <Button
+          title="Back to Song List"
+          onPress={() => setCurrentView('songs')}
+        />
+      </View>
+    );
+  }
 
   return (
     <Formik
-      initialValues={{ title: '', artist: '', lyrics: '' }}
+      initialValues={{
+        title: currentSong.title,
+        artist: currentSong.artist,
+        lyrics: currentSong.lyrics,
+      }}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         if (!values.title || !values.artist || !values.lyrics) {
           Alert.alert('Please fill out all fields!');
           setSubmitting(false);
           return;
         }
-        addSong(values);
+        updateSong({ ...values, id: currentSong.id });
         setSubmitting(false);
         setCurrentView('songs');
         resetForm();
@@ -28,7 +43,7 @@ const AddSong = () => {
       {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <View className="flex flex-col gap-1 h-full">
           <PageHeader>
-            <MainHeading>Add a new song</MainHeading>
+            <MainHeading>Edit song</MainHeading>
           </PageHeader>
           <View className="flex-row">
             <CustomTextInput
@@ -66,15 +81,11 @@ const AddSong = () => {
               <Button
                 disabled={isSubmitting}
                 onPress={handleSubmit as any}
-                title="Add"
+                title="Update"
               />
             </View>
             <View className="w-1/2">
-              <Button
-                onPress={() => setCurrentView('songs')}
-                title="Cancel"
-                color="red"
-              />
+              <Button onPress={() => setCurrentView('songs')} title="Cancel" />
             </View>
           </View>
         </View>
@@ -83,4 +94,4 @@ const AddSong = () => {
   );
 };
 
-export default AddSong;
+export default EditSong;

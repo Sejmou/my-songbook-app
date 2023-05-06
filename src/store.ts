@@ -3,9 +3,20 @@ import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MIDIInputWithListeners } from './hooks/midi/midi-input';
 
+type ViewName =
+  | 'songs'
+  | 'current-song'
+  | 'edit-song'
+  | 'add-song'
+  | 'midi-input-config';
+
 type SongStore = {
+  currentView: ViewName;
+  setCurrentView: (view: ViewName) => void;
+
   songs: Song[];
   addSong: (song: NewSong) => void;
+  updateSong: (song: Song) => void;
   removeSong: (id: string) => void;
   setCurrentSong: (id: string) => void;
   currentSongId?: string;
@@ -31,6 +42,12 @@ export const useSongStore = create<SongStore>()(
   devtools(
     persist(
       (set, get) => ({
+        currentView: 'songs',
+        setCurrentView: view =>
+          set(() => ({
+            currentView: view,
+          })),
+
         songs: [],
         addSong: song =>
           set(state => ({
@@ -42,6 +59,10 @@ export const useSongStore = create<SongStore>()(
                 id: song.title + song.artist + song.lyrics + Math.random(),
               },
             ],
+          })),
+        updateSong: song =>
+          set(state => ({
+            songs: state.songs.map(s => (s.id === song.id ? song : s)),
           })),
         removeSong: id => {
           const currentSongs = get().songs;

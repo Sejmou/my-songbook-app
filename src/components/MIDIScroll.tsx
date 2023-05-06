@@ -1,6 +1,4 @@
-import { type MIDIInput } from '@motiz88/react-native-midi';
 import { type RefObject } from 'react';
-import { useSongStore } from '../store';
 import { useMIDINote } from '../hooks/midi/use-midi-note';
 import { MIDIInputWithListeners } from '../hooks/midi/midi-input';
 
@@ -49,22 +47,6 @@ function scrollUp(element: HTMLElement | Window = window) {
   element.scrollBy({
     top: -window.innerHeight * 0.5,
     left: 0,
-    behavior: 'smooth',
-  });
-}
-
-function scrollLeft(element: HTMLElement | Window = window) {
-  element.scrollBy({
-    top: 0,
-    left: -window.innerWidth * 0.5,
-    behavior: 'smooth',
-  });
-}
-
-function scrollRight(element: HTMLElement | Window = window) {
-  element.scrollBy({
-    top: 0,
-    left: window.innerWidth * 0.5,
     behavior: 'smooth',
   });
 }

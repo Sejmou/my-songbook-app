@@ -1,9 +1,10 @@
-import { Fragment, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useCurrentSong, useSongStore } from '../store';
 import CheckboxInput from './CheckboxInput';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { MainHeading, RegularText, SubHeading } from './typography';
 import classNames from 'classnames';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 type Props = {
   className?: string;
@@ -11,6 +12,7 @@ type Props = {
 
 const CurrentSong = (props: Props) => {
   const currentSong = useCurrentSong();
+  const setCurrentView = useSongStore(state => state.setCurrentView);
 
   const lyricBlocks = useMemo(
     () =>
@@ -36,14 +38,24 @@ const CurrentSong = (props: Props) => {
 
   return (
     <View className={props.className}>
-      <View className="mb-4 flex flex-col">
-        <MainHeading>{currentSong.title || 'No Title'}</MainHeading>
-        <SubHeading>
-          by{' '}
-          <Text className="font-semibold">
-            {currentSong.artist || 'No Artist'}
-          </Text>
-        </SubHeading>
+      <View className="flex flex-row items-center">
+        <TouchableOpacity
+          className="w-8 h-8 mx-4"
+          onPress={() => setCurrentView('songs')}
+        >
+          <View>
+            <Ionicons name="md-arrow-back-outline" size={32} color="gray" />
+          </View>
+        </TouchableOpacity>
+        <View className="mb-4 flex flex-col">
+          <MainHeading>{currentSong.title || 'No Title'}</MainHeading>
+          <SubHeading>
+            by{' '}
+            <Text className="font-semibold">
+              {currentSong.artist || 'No Artist'}
+            </Text>
+          </SubHeading>
+        </View>
       </View>
       <SectionHeadingsCheckbox />
       <View className="flex flex-col mt-4">

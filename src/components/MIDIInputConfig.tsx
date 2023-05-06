@@ -4,7 +4,8 @@ import SelectInput from './SelectInput';
 import { useMIDI } from '../hooks/midi/use-midi';
 import { useMIDINote } from '../hooks/midi/use-midi-note';
 import { MIDIInputWithListeners } from '../hooks/midi/midi-input';
-import { SubHeading } from './typography';
+import { MainHeading, SubHeading } from './typography';
+import PageHeader from './PageHeader';
 
 type Props = {
   className?: string;
@@ -14,6 +15,7 @@ const MIDIInputSelect = ({ className }: Props) => {
   const { inputs } = useMIDI();
   const midiInput = useSongStore(state => state.midiInput);
   const setMidiInput = useSongStore(state => state.setMidiInput);
+  const setCurrentView = useSongStore(state => state.setCurrentView);
 
   const handleSelectChange = (id: string) => {
     const selectedInput = inputs?.find(i => i.id === id);
@@ -36,6 +38,9 @@ const MIDIInputSelect = ({ className }: Props) => {
 
   return (
     <View className={className}>
+      <PageHeader>
+        <MainHeading>MIDI control settings</MainHeading>
+      </PageHeader>
       <SubHeading>Select MIDI input</SubHeading>
       <Text className="mb-2">
         You can then scroll lyrics via MIDI - send note 2 on any channel for
@@ -64,7 +69,8 @@ const MIDINoteLog = ({ input }: { input: MIDIInputWithListeners }) => {
   return (
     <View>
       <Text>
-        Note {note} {on ? 'on' : 'off'} ({velocity}) on channel {channel}
+        Last received signal: Note {note} {on ? 'on' : 'off'} (velocity:{' '}
+        {velocity}) on channel {channel}
       </Text>
     </View>
   );
