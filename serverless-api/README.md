@@ -15,3 +15,8 @@ Run the app at the root of the repository:
 ```bash
 vercel dev
 ```
+
+### Generate DB migration for Drizzle Schema
+```
+npx drizzle-kit generate:pg --out migrations-folder --schema db/schema.ts   
+```
