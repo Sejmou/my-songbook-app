@@ -12,6 +12,7 @@
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-picker/picker": "2.4.8",
     "classnames": "^2.3.2",
+    "dotenv": "^16.0.3",
     "expo": "~48.0.15",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",

@@ -1,7 +1,16 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useCurrentSong, useSongStore } from '../store';
 import CheckboxInput from './CheckboxInput';
-import { ScrollView, Text, View } from 'react-native';
+import {
+  Button,
+  FlatList,
+  ScrollView,
+  Text,
+  View,
+  ViewToken,
+  ViewabilityConfig,
+  ViewabilityConfigCallbackPair,
+} from 'react-native';
 import { MainHeading, RegularText, SubHeading } from './typography';
 import classNames from 'classnames';
 import PageHeader from './PageHeader';
@@ -18,10 +27,6 @@ const CurrentSong = (props: Props) => {
       currentSong ? splitIntoBlocksBySectionHeading(currentSong.lyrics) : [],
     [currentSong]
   );
-  const lyricBlockIds = useMemo(
-    () => lyricBlocks.map((b, i) => `${b.name}-${i}`),
-    [lyricBlocks]
-  );
 
   const showSectionHeadingsOnly = useSongStore(
     state => state.showSectionHeadingsOnly
@@ -34,6 +39,63 @@ const CurrentSong = (props: Props) => {
       </View>
     );
   }
+
+  const firstVisibleLyricBlockIndex = useRef<number | null>(null);
+  const lastVisibleLyricBlockIndex = useRef<number | null>(null);
+
+  const onViewableItemsChanged = useCallback(
+    ({
+      viewableItems,
+    }: {
+      viewableItems: ViewToken[];
+      changed: ViewToken[];
+    }) => {
+      const visibleIndexes = viewableItems
+        .map(el => el.index)
+        .filter(i => !!i) as number[];
+      const minVisibleIndex = Math.min(...visibleIndexes);
+      const maxVisibleIndex = Math.max(...visibleIndexes);
+      firstVisibleLyricBlockIndex.current = minVisibleIndex;
+      lastVisibleLyricBlockIndex.current = maxVisibleIndex;
+    },
+    []
+  );
+
+  const viewabilityConfig = useMemo<ViewabilityConfig>(
+    () => ({
+      itemVisiblePercentThreshold: 50, // TODO: figure out appropriate value
+      waitForInteraction: false,
+    }),
+    []
+  );
+
+  const viewabilityConfigCallbackPairs = useRef<
+    ViewabilityConfigCallbackPair[]
+  >([{ viewabilityConfig, onViewableItemsChanged }]);
+
+  const flatListRef = useRef<FlatList>(null);
+
+  const scrollNextInvisibleBlockIntoView = useCallback(() => {
+    if (lastVisibleLyricBlockIndex.current === null) {
+      return;
+    }
+    const nextBlockIndex = lastVisibleLyricBlockIndex.current + 1;
+    if (nextBlockIndex >= lyricBlocks.length) {
+      return;
+    }
+    flatListRef.current?.scrollToIndex({ index: nextBlockIndex });
+  }, [lyricBlocks]);
+
+  const scrollPreviousInvisibleBlockIntoView = useCallback(() => {
+    if (firstVisibleLyricBlockIndex.current === null) {
+      return;
+    }
+    const previousBlockIndex = firstVisibleLyricBlockIndex.current - 1;
+    if (previousBlockIndex < 0) {
+      return;
+    }
+    flatListRef.current?.scrollToIndex({ index: previousBlockIndex });
+  }, [lyricBlocks]);
 
   return (
     <View className="flex h-full">
@@ -48,33 +110,52 @@ const CurrentSong = (props: Props) => {
           </SubHeading>
         </View>
       </PageHeader>
-      <View className="mt-4">
+      <View className="mt-4 flex flex-row justify-between">
         <SectionHeadingsCheckbox />
+        <View className="flex flex-row">
+          <Button
+            onPress={scrollPreviousInvisibleBlockIntoView}
+            title="Next Section"
+          />
+          <Button
+            onPress={scrollNextInvisibleBlockIntoView}
+            title="Previous Section"
+          />
+        </View>
       </View>
-      <ScrollView
-        className="flex flex-col mt-4 overflow-scroll flex-1 mb-4"
-        bounces={false}
-      >
-        {lyricBlocks.map((b, i) => (
-          <View
-            key={i}
-            id={lyricBlockIds[i]}
-            className={classNames(
-              { 'mt-8': i !== 0 && !showSectionHeadingsOnly },
-              { 'mt-4': i !== 0 && showSectionHeadingsOnly }
-            )}
-          >
-            <RegularText additionalClassNames="font-bold">{b.name}</RegularText>
-            {!showSectionHeadingsOnly && (
-              <View>
-                {b.content.split('\n').map((line, i) => (
-                  <RegularText key={i}>{line}</RegularText>
-                ))}
+      {viewabilityConfigCallbackPairs.current && (
+        <FlatList
+          className="flex flex-col mt-4 overflow-scroll flex-1 mb-4"
+          data={lyricBlocks}
+          ref={flatListRef}
+          viewabilityConfigCallbackPairs={
+            viewabilityConfigCallbackPairs.current
+          }
+          renderItem={({ item, index }) => {
+            const block = item as LyricBlock;
+            return (
+              <View
+                className={classNames(
+                  { 'mt-8': index !== 0 && !showSectionHeadingsOnly },
+                  { 'mt-4': index !== 0 && showSectionHeadingsOnly }
+                )}
+              >
+                <RegularText additionalClassNames="font-bold">
+                  {block.name}
+                </RegularText>
+                {!showSectionHeadingsOnly && (
+                  <View>
+                    {block.content.split('\n').map((line, i) => (
+                      <RegularText key={i}>{line}</RegularText>
+                    ))}
+                  </View>
+                )}
               </View>
-            )}
-          </View>
-        ))}
-      </ScrollView>
+            );
+          }}
+          bounces={false}
+        />
+      )}
     </View>
   );
 };
@@ -99,7 +180,12 @@ const SectionHeadingsCheckbox = () => {
 
 export default CurrentSong;
 
-function splitIntoBlocksBySectionHeading(lyrics: string) {
+type LyricBlock = {
+  name: string;
+  content: string;
+};
+
+function splitIntoBlocksBySectionHeading(lyrics: string): LyricBlock[] {
   // example section heading: [Verse 1]
 
   // this regex matches the section heading and content until the next section heading or the end of the string

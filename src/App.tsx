@@ -8,8 +8,12 @@ import { useSongStore } from './store';
 import { useMemo } from 'react';
 import EditSong from './components/EditSong';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Constants from 'expo-constants';
+import { Dimensions } from 'react-native';
+import classNames from 'classnames';
 
 export default function App() {
+  const width = Dimensions.get('window').width;
   const currentViewName = useSongStore(state => state.currentView);
   const setCurrentView = useSongStore(state => state.setCurrentView);
 
@@ -20,7 +24,13 @@ export default function App() {
           <>
             <View className="flex flex-row w-full">
               <View className="flex-1"></View>
-              <Text className="text-5xl font-extrabold tracking-tight text-center">
+              <Text
+                className={classNames(
+                  'font-extrabold tracking-tight text-center',
+                  { 'text-4xl': width < 400 },
+                  { 'text-5xl': width >= 400 }
+                )}
+              >
                 My <Text className="text-purple-500">Song</Text>Book
               </Text>
               <View className="flex-1 flex flex-row justify-end items-center">
@@ -59,7 +69,12 @@ export default function App() {
   }, [currentViewName]);
 
   return (
-    <View className="mt-8 mx-4 flex flex-col">
+    <View
+      className="mx-4 flex flex-col"
+      style={{
+        marginTop: Constants.statusBarHeight + 4,
+      }}
+    >
       <StatusBar style="auto" />
       {currentView}
     </View>

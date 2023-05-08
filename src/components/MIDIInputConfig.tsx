@@ -15,7 +15,6 @@ const MIDIInputSelect = ({ className }: Props) => {
   const { inputs } = useMIDI();
   const midiInput = useSongStore(state => state.midiInput);
   const setMidiInput = useSongStore(state => state.setMidiInput);
-  const setCurrentView = useSongStore(state => state.setCurrentView);
 
   const handleSelectChange = (id: string) => {
     const selectedInput = inputs?.find(i => i.id === id);
@@ -39,7 +38,7 @@ const MIDIInputSelect = ({ className }: Props) => {
   return (
     <View className={className}>
       <PageHeader>
-        <MainHeading>MIDI control settings</MainHeading>
+        <MainHeading>MIDI Settings</MainHeading>
       </PageHeader>
       <SubHeading>Select MIDI input</SubHeading>
       <Text className="mb-2">
