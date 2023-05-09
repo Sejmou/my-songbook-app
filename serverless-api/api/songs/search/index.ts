@@ -1,7 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
-import puppeteer from 'puppeteer';
 import { superSecretKey } from '../../../db/api_base';
+
+import chromium from 'chrome-aws-lambda';
+
+// const browser = await puppeteer.launch( { args: ['--no-sandbox'] } );
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
@@ -17,6 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await getLyricsSearchResults(query);
       return res.status(200).json({});
     } catch (e) {
+      console.log(e);
       return res
         .status(400)
         .json({ message: 'Please provide a valid query string' });
@@ -27,7 +31,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 async function getLyricsSearchResults(query: string) {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const localChromiumPath =
+    process.env.NODE_ENV == 'development'
+      ? await import('puppeteer').then(p => p.executablePath())
+      : undefined;
+  const browser = await chromium.puppeteer.launch({
+    args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
+    defaultViewport: chromium.defaultViewport,
+    executablePath:
+      process.env.NODE_ENV !== 'development'
+        ? await chromium.executablePath
+        : localChromiumPath,
+    headless: process.env.NODE_ENV !== 'development' ? chromium.headless : true,
+    ignoreHTTPSErrors: true,
+  });
   const page = await browser.newPage();
 
   await page.goto(`https://genius.com/search?q=${query}`);
@@ -41,6 +58,7 @@ async function getLyricsSearchResults(query: string) {
         link: el.getAttribute('href'),
       })) // second element is the song results, each result item is wrapped in an anchor tag
   );
+  console.log('found songs', songSearchResults);
   await browser.close();
   return songSearchResults;
 }
