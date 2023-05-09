@@ -14,6 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
   const bearer = req.headers.authorization;
   const token = bearer?.split(' ')[1];
+  console.log('token', token);
   if (!token || token !== superSecretKey) {
     return res.status(401).json({ message: 'Not authorized' });
   }
