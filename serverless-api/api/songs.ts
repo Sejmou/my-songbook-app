@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Pool } from '@vercel/postgres';
+import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { songs } from '../db/schema';
 import { z } from 'zod';
+import { eq } from 'drizzle-orm';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -21,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
   const bearer = req.headers.authorization;
   const token = bearer?.split(' ')[1];
-  if (!token) {
+  if (!token || token !== superSecretKey) {
     return res.status(401).json({ message: 'Not authorized' });
   }
 
@@ -30,12 +31,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.json(allSongs);
   } else if (method === 'POST') {
     const newSong = newSongValidator.parse(req.body);
-    const songInDB = await db.insert(songs).values(newSong).returning();
-    return res.status(201).json({ ...newSong });
+    const songInDB = (await db.insert(songs).values(newSong).returning())[0];
+    return res.status(201).json(songInDB);
+  } else if (method === 'DELETE') {
+    const id = z.number().parse(req.query.id);
+    if (!id) {
+      return res.status(400).json({ message: 'Missing id' });
+    }
+    await db.delete(songs).where(eq(songs.id, id));
+    return res.status(204).json({});
   }
 
-  const { name = 'World' } = req.query;
-  return res.json({
-    message: `Hello ${name}!`,
-  });
+  return res.status(204).json({});
 }

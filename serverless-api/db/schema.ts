@@ -1,7 +1,7 @@
 import { InferModel } from 'drizzle-orm';
 import { pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
 
-export const songs = pgTable('users', {
+export const songs = pgTable('songs', {
   id: serial('id').primaryKey(),
   title: varchar('title').notNull(),
   artist: varchar('artist').notNull(),
