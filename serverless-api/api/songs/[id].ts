@@ -4,12 +4,6 @@ import { eq } from 'drizzle-orm';
 import { songs } from '../../db/schema';
 import { db, superSecretKey } from '../../db/api_base';
 
-const newSongValidator = z.object({
-  title: z.string().min(1).max(127),
-  artist: z.string().min(1).max(127),
-  lyrics: z.string().min(1),
-});
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
   const bearer = req.headers.authorization;
