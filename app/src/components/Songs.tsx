@@ -1,8 +1,10 @@
 import classNames from 'classnames';
 import { useSongStore } from '../store';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert, Text } from 'react-native';
 import { MainHeading, RegularText } from './typography';
+import { useSyncToServer, useSyncFromServer } from '../hooks/use-api';
+import IconButton from '../components/IconButton';
 
 type Props = {
   className?: string;
@@ -58,7 +60,10 @@ const Songs = (props: Props) => {
 
   return (
     <View className={classNames('w-full flex flex-col', props.className)}>
-      <MainHeading>Songs</MainHeading>
+      <View className="flex flex-row">
+        <MainHeading>Songs</MainHeading>
+        <SongSyncButtons />
+      </View>
       {songs.length === 0 ? (
         <RegularText>No songs yet. Add one!</RegularText>
       ) : (
@@ -99,4 +104,37 @@ const Songs = (props: Props) => {
   );
 };
 
+const SongSyncButtons = () => {
+  const { syncToServer, syncState: uploadStatus } = useSyncToServer();
+  const { syncFromServer, syncState: downloadStatus } = useSyncFromServer();
+
+  return (
+    <View className="flex flex-row">
+      <IconButton iconName="cloud-upload-outline" onPress={syncToServer} />
+      <IconButton iconName="cloud-download-outline" onPress={syncFromServer} />
+      <Text>{getUserFriendlyMessage(uploadStatus, 'upload')}</Text>
+      <Text>{getUserFriendlyMessage(downloadStatus, 'download')}</Text>
+    </View>
+  );
+};
+
 export default Songs;
+
+function getUserFriendlyMessage(
+  status: 'idle' | 'syncing' | 'failed',
+  type: 'upload' | 'download'
+) {
+  if (status === 'idle') {
+    return '';
+  }
+
+  if (status === 'syncing') {
+    return `${type}ing...`;
+  }
+
+  if (status === 'failed') {
+    return `${type} failed`;
+  }
+
+  return '';
+}

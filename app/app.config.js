@@ -31,7 +31,6 @@ export default {
     eas: {
       projectId: 'eb37296c-489c-4ffb-b1b1-bd6dc86262c7',
     },
-    databaseUrl: process.env.DATABASE_URL,
   },
   owner: 'sejmou',
 };

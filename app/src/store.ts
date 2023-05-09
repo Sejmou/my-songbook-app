@@ -16,6 +16,7 @@ type SongStore = {
 
   songs: Song[];
   addSong: (song: NewSong) => void;
+  addSongFromServer: (song: Song) => void; // songs from the server already have an ID
   updateSong: (song: Song) => void;
   removeSong: (id: string) => void;
   setCurrentSong: (id: string) => void;
@@ -56,9 +57,13 @@ export const useSongStore = create<SongStore>()(
               {
                 ...song,
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                id: song.title + song.artist + song.lyrics + Math.random(),
+                id: 'local-' + randomID(), // songs that are synced to the server will have a different ID (not starting with 'local-')
               },
             ],
+          })),
+        addSongFromServer: song =>
+          set(state => ({
+            songs: [...state.songs, song],
           })),
         updateSong: song =>
           set(state => ({
@@ -106,4 +111,8 @@ export function useCurrentSong() {
     state.songs.find(s => s.id === currentSongId)
   );
   return currentSong;
+}
+
+function randomID() {
+  return Math.random().toString(36).substring(7);
 }

@@ -1,52 +1,26 @@
-import { type RefObject } from 'react';
 import { useMIDINote } from '../hooks/midi/use-midi-note';
 import { MIDIInputWithListeners } from '../hooks/midi/midi-input';
 
-// allows scrolling within a DOM element via MIDI
-// TODO: make this actually work with a DOM element and not just the whole page which is actually the case right now
-// TODO: there MUST be a cleaner way to do this lol
+// allows scrolling (or actually, with some code modifications, triggering arbitrary actions) via MIDI
 const MIDIScroll = ({
   input,
-  ref,
+  onScrollUp,
+  onScrollDown,
 }: {
   input: MIDIInputWithListeners;
-  ref: RefObject<HTMLElement>;
+  onScrollUp: () => void;
+  onScrollDown: () => void;
 }) => {
-  useMIDIControlledScroll(input, ref);
+  const event = useMIDINote(input);
+  if (!event) return <></>;
+  const { on, note } = event;
+
+  if (on && note === 3) {
+    onScrollDown();
+  } else if (on && note === 2) {
+    onScrollUp();
+  }
   return <></>;
 };
 
 export default MIDIScroll;
-
-function useMIDIControlledScroll(
-  input: MIDIInputWithListeners,
-  ref: RefObject<HTMLElement>
-) {
-  const event = useMIDINote(input);
-  if (!event) return;
-  const { on, note } = event;
-
-  const element = ref && ref.current ? ref.current : undefined; // for some reason, atm ref is always undefined!?
-
-  if (on && note === 3) {
-    scrollDown(element);
-  } else if (on && note === 2) {
-    scrollUp(element);
-  }
-}
-
-function scrollDown(element: HTMLElement | Window = window) {
-  element.scrollBy({
-    top: window.innerHeight * 0.5,
-    left: 0,
-    behavior: 'smooth',
-  });
-}
-
-function scrollUp(element: HTMLElement | Window = window) {
-  element.scrollBy({
-    top: -window.innerHeight * 0.5,
-    left: 0,
-    behavior: 'smooth',
-  });
-}

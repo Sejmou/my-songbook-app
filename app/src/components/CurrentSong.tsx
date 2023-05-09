@@ -14,6 +14,7 @@ import {
 import { MainHeading, RegularText, SubHeading } from './typography';
 import classNames from 'classnames';
 import PageHeader from './PageHeader';
+import MIDIScroll from './MIDIScroll';
 
 type Props = {
   className?: string;
@@ -97,6 +98,8 @@ const CurrentSong = (props: Props) => {
     flatListRef.current?.scrollToIndex({ index: previousBlockIndex });
   }, [lyricBlocks]);
 
+  const input = useSongStore(state => state.midiInput);
+
   return (
     <View className="flex h-full">
       <PageHeader>
@@ -154,6 +157,13 @@ const CurrentSong = (props: Props) => {
             );
           }}
           bounces={false}
+        />
+      )}
+      {input && (
+        <MIDIScroll
+          input={input}
+          onScrollUp={scrollPreviousInvisibleBlockIntoView}
+          onScrollDown={scrollNextInvisibleBlockIntoView}
         />
       )}
     </View>
