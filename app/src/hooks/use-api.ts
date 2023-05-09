@@ -19,7 +19,8 @@ export const useSyncToServer = () => {
   const localSongs = useSongStore(state =>
     state.songs.filter(s => s.id.startsWith('local-'))
   );
-  const updateSong = useSongStore(state => state.updateSong);
+  const addSongFromServer = useSongStore(state => state.addSongFromServer);
+  const removeSong = useSongStore(state => state.removeSong);
 
   const syncToServer = async () => {
     setSyncState('syncing');
@@ -43,7 +44,8 @@ export const useSyncToServer = () => {
       const syncedSongs = syncedSongJSONs
         .map(json => songResponseValidator.parse(json))
         .map(s => ({ ...s, id: s.id.toString() }));
-      syncedSongs.forEach(updateSong);
+      syncedSongs.forEach(addSongFromServer); // the synced songs have new IDs from the server, so we add them to the store (finding their local counterparts is not really possible)
+      localSongs.map(s => s.id).forEach(removeSong); // TODO: for now we simply remove the local copies of the songs, there is probably a better way to handle this
       setSyncState('idle');
     } else {
       console.log(
