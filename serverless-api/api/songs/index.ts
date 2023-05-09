@@ -1,16 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { songs } from '../db/schema';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool);
-const superSecretKey = process.env.SUPER_SECRET_KEY;
+import { songs } from '../../db/schema';
+import { db, superSecretKey } from '../../db/api_base';
 
 const newSongValidator = z.object({
   title: z.string().min(1).max(127),
