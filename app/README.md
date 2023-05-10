@@ -5,6 +5,40 @@ This is a React Native App I built with Expo. It allows musicians to store the s
 
 In general, if something does not work `expo prebuild` should fix issues with native code dependencies in most cases.
 
+### Building/Sideloading Android App
+
+Required CLI tools:
+
+ - `bundletool` for creating Android App Bundle (`.aab` file, contains `.apk` for your app as well) - installable via homebrew
+ - `adb` for installing created `.apk` on your device - should come with Android Studio installation, also installable via homebrew (as part of `android-platform-tools`)
+ - `keytool` for generating keystore used for signing the app (without signing, built app will NOT be installable!) - comes with your JDK installation
+
+Steps:
+
+1. Create `.aab` file for App Bundle containing your `.apk` (either with `eas build` or `eas build --local`, picking Android as target platform, of course) - if building locally, make sure `ANDROID_HOME` is set properly
+2. If you don't have a keystore file yet, create one with `keytool` (make sure to specify the proper keystore and key alias name):
+   
+   ```
+   keytool -genkey -v -keystore my-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
+   ```
+
+3. Locate created `.aab` file from previous step and run
+   
+   ```
+   bundletool build-apks --bundle=your-bundle-name.aab --output=app.apks --mode=universal --ks=my-key.keystore --ks-key-alias=alias_name   
+   ```
+4. unzip created `.apks` file
+   
+   ```
+   unzip -o app.apks -d app
+   ```
+5. Install `.apk` located inside created directory with `adb`
+   
+   ```
+   adb install app/universal.apk
+   ```
+
+
 ### Building/Sideloading iOS app locally without Apple Dev account (100 euros per year lul) incl. the JS bundle
 
 Note: It is IMPOSSIBLE to build via EAS without an Apple Dev account (yes, stupid af, but that's the way it is)
