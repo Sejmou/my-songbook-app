@@ -5,7 +5,18 @@ This is a React Native App I built with Expo. It allows musicians to store the s
 
 In general, if something does not work `expo prebuild` should fix issues with native code dependencies in most cases.
 
+### Building in general
+Make sure to create Android and iOS 'pre-builds':
+```bash
+npx expo prebuild
+```
+
 ### Building/Sideloading Android App
+## Android Studio
+Build -> Generate Signed Bundle/APK -> APK -> (if not exists: Create new keystore -> Fill out form) -> Build Type: release -> Copy APK to device (install Android File Transfer if necessary) -> Install APK (allow unknown sources in settings, skip Play protect warning)
+
+
+## Alternative, CLI only workflow (doesn't work for me atm)
 
 Required CLI tools:
 
