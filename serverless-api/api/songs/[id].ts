@@ -2,13 +2,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { songs } from '../../db/schema';
-import { db, superSecretKey } from '../../db/api_base';
+import { db, env } from '../../db/api_base';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
   const bearer = req.headers.authorization;
   const token = bearer?.split(' ')[1];
-  if (!token || token !== superSecretKey) {
+  if (!token || token !== env.SECRET_KEY) {
     return res.status(401).json({ message: 'Not authorized' });
   }
 
