@@ -79,7 +79,7 @@ const CurrentSong = (props: Props) => {
     if (lastVisibleLyricBlockIndex.current === null) {
       return;
     }
-    const nextBlockIndex = lastVisibleLyricBlockIndex.current + 1;
+    const nextBlockIndex = lastVisibleLyricBlockIndex.current; // don't really understand why + 1 is not needed here
     if (nextBlockIndex >= lyricBlocks.length) {
       return;
     }
@@ -147,7 +147,7 @@ const CurrentSong = (props: Props) => {
                 </RegularText>
                 {!showSectionHeadingsOnly && (
                   <View>
-                    {block.content.split('\n').map((line, i) => (
+                    {block.lines.map((line, i) => (
                       <RegularText key={i}>{line}</RegularText>
                     ))}
                   </View>
@@ -191,33 +191,39 @@ export default CurrentSong;
 
 type LyricBlock = {
   name: string;
-  content: string;
+  lines: string[];
 };
 
 function splitIntoBlocksBySectionHeading(lyrics: string): LyricBlock[] {
   // example section heading: [Verse 1]
+  const lines = lyrics.split('\n');
+  const blocks: LyricBlock[] = [];
 
-  // this regex matches the section heading and content until the next section heading or the end of the string
-  const regex = /^\[(.+?)\]\n([\s\S]*?)(?=^\[|\Z)/gm;
+  let currentBlock: LyricBlock | null = null;
 
-  const blocks = [];
-  let match;
-  while ((match = regex.exec(lyrics))) {
-    const block = {
-      name: match[1] || '',
-      content: match[2]?.trim() || '',
-    };
-    blocks.push(block);
+  for (const line of lines) {
+    if (line.startsWith('[') && line.endsWith(']')) {
+      if (currentBlock) {
+        // push previous block contents to array
+        blocks.push(currentBlock);
+      }
+      currentBlock = { name: line.substring(1, line.length - 1), lines: [] };
+    } else {
+      if (currentBlock) {
+        currentBlock.lines.push(line);
+      } else {
+        // discovered line without section heading
+        currentBlock = { name: '', lines: [line] };
+      }
+    }
   }
 
-  // match final section heading without content
-  const finalSectionHeading = lyrics.match(/\[(.+?)\]\n?$/);
-  if (finalSectionHeading) {
-    const block = {
-      name: finalSectionHeading[1] || '',
-      content: '',
-    };
-    blocks.push(block);
+  if (currentBlock) {
+    blocks.push(currentBlock);
+  }
+
+  for (const block of blocks) {
+    block.lines = block.lines.filter(line => line.trim() !== '');
   }
 
   return blocks;
