@@ -3,13 +3,15 @@ import { useSongStore } from '../store';
 import { View, Text, TouchableOpacity, Dimensions, Button } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SongList from '../components/SongList';
+import SongSyncButtons from '../components/SongSyncButtons';
+import { MainHeading } from '../components/typography';
 
 const Songs = () => {
   const setCurrentView = useSongStore(state => state.setCurrentView);
   const width = Dimensions.get('window').width;
 
   return (
-    <>
+    <View className="h-full pb-8">
       <View className="flex flex-row w-full">
         <View className="flex-1"></View>
         <Text
@@ -32,9 +34,13 @@ const Songs = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <View className="flex flex-row w-full">
+        <MainHeading>Songs</MainHeading>
+        <SongSyncButtons />
+      </View>
       <SongList />
       <Button title="Add New Song" onPress={() => setCurrentView('add-song')} />
-    </>
+    </View>
   );
 };
 
