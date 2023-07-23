@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useCurrentSong, useSongStore } from '../store';
-import CheckboxInput from './CheckboxInput';
+import CheckboxInput from '../components/CheckboxInput';
 import {
   Button,
   FlatList,
@@ -11,10 +11,10 @@ import {
   ViewabilityConfig,
   ViewabilityConfigCallbackPair,
 } from 'react-native';
-import { MainHeading, RegularText, SubHeading } from './typography';
+import { MainHeading, RegularText, SubHeading } from '../components/typography';
 import classNames from 'classnames';
-import PageHeader from './PageHeader';
-import MIDIScroll from './MIDIScroll';
+import PageHeader from '../components/PageHeader';
+import MIDIScroll from '../components/MIDIScroll';
 
 type Props = {
   className?: string;

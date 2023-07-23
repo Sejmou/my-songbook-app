@@ -1,11 +1,11 @@
 import { useSongStore } from '../store';
 import { Text, View } from 'react-native';
-import SelectInput from './SelectInput';
+import SelectInput from '../components/SelectInput';
 import { useMIDI } from '../hooks/midi/use-midi';
 import { useMIDINote } from '../hooks/midi/use-midi-note';
 import { MIDIInputWithListeners } from '../hooks/midi/midi-input';
-import { MainHeading, SubHeading } from './typography';
-import PageHeader from './PageHeader';
+import { MainHeading, SubHeading } from '../components/typography';
+import PageHeader from '../components/PageHeader';
 
 type Props = {
   className?: string;

@@ -1,40 +1,25 @@
-import { View, Button, Text, ScrollView, Alert } from 'react-native';
+import { View, Button, ScrollView } from 'react-native';
 import { Formik } from 'formik';
-import { useCurrentSong, useSongStore } from '../store';
-import CustomTextInput from './CustomTextInput';
-import { MainHeading } from './typography';
-import PageHeader from './PageHeader';
+import { useSongStore } from '../store';
+import CustomTextInput from '../components/CustomTextInput';
+import { Alert } from 'react-native';
+import { MainHeading } from '../components/typography';
+import PageHeader from '../components/PageHeader';
 
-const EditSong = () => {
-  const updateSong = useSongStore(state => state.updateSong);
-  const currentSong = useCurrentSong();
+const AddSong = () => {
+  const addSong = useSongStore(state => state.addSong);
   const setCurrentView = useSongStore(state => state.setCurrentView);
-  if (!currentSong) {
-    return (
-      <View>
-        <Text>Something went wrong - could not find song!</Text>{' '}
-        <Button
-          title="Back to Song List"
-          onPress={() => setCurrentView('songs')}
-        />
-      </View>
-    );
-  }
 
   return (
     <Formik
-      initialValues={{
-        title: currentSong.title,
-        artist: currentSong.artist,
-        lyrics: currentSong.lyrics,
-      }}
+      initialValues={{ title: '', artist: '', lyrics: '' }}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         if (!values.title || !values.artist || !values.lyrics) {
           Alert.alert('Please fill out all fields!');
           setSubmitting(false);
           return;
         }
-        updateSong({ ...values, id: currentSong.id });
+        addSong(values);
         setSubmitting(false);
         setCurrentView('songs');
         resetForm();
@@ -43,7 +28,7 @@ const EditSong = () => {
       {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <View className="flex flex-col gap-1 h-full">
           <PageHeader>
-            <MainHeading>Edit song</MainHeading>
+            <MainHeading>Add a new song</MainHeading>
           </PageHeader>
           <View className="flex-row">
             <CustomTextInput
@@ -81,11 +66,15 @@ const EditSong = () => {
               <Button
                 disabled={isSubmitting}
                 onPress={handleSubmit as any}
-                title="Update"
+                title="Add"
               />
             </View>
             <View className="w-1/2">
-              <Button onPress={() => setCurrentView('songs')} title="Cancel" />
+              <Button
+                onPress={() => setCurrentView('songs')}
+                title="Cancel"
+                color="red"
+              />
             </View>
           </View>
         </View>
@@ -94,4 +83,4 @@ const EditSong = () => {
   );
 };
 
-export default EditSong;
+export default AddSong;

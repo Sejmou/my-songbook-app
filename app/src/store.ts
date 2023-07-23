@@ -35,7 +35,7 @@ type NewSong = {
   lyrics: string;
 };
 
-type Song = NewSong & {
+export type Song = NewSong & {
   id: string;
 };
 
