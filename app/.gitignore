@@ -20,3 +20,5 @@ web-build/
 .env
 
 builds/
+android/app/release/
+android/app/dedug/
