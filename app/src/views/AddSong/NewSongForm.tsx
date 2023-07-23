@@ -1,18 +1,29 @@
-import { View, Button, ScrollView } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Button, Alert } from 'react-native';
 import { Formik } from 'formik';
-import { useSongStore } from '../store';
-import CustomTextInput from '../components/CustomTextInput';
-import { Alert } from 'react-native';
-import { MainHeading } from '../components/typography';
-import PageHeader from '../components/PageHeader';
+import CustomTextInput from '../../components/CustomTextInput';
+import { useSongStore } from '../../store';
+import type { NewSong } from '../../store';
 
-const AddSong = () => {
+type FormProps = {
+  initialValues?: NewSong;
+};
+
+const NewSongForm = ({ initialValues }: FormProps) => {
   const addSong = useSongStore(state => state.addSong);
   const setCurrentView = useSongStore(state => state.setCurrentView);
 
+  const [rerenderHackKey, setRerenderHackKey] = useState(0);
+
+  useEffect(() => {
+    // This is a hack to make sure that the form is re-rendered (values updated) when the initialValues change.
+    setRerenderHackKey(prev => prev + 1);
+  }, [initialValues]);
+
   return (
     <Formik
-      initialValues={{ title: '', artist: '', lyrics: '' }}
+      key={rerenderHackKey}
+      initialValues={initialValues || { title: '', artist: '', lyrics: '' }}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         if (!values.title || !values.artist || !values.lyrics) {
           Alert.alert('Please fill out all fields!');
@@ -26,10 +37,7 @@ const AddSong = () => {
       }}
     >
       {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-        <View className="flex flex-col gap-1 h-full">
-          <PageHeader>
-            <MainHeading>Add a new song</MainHeading>
-          </PageHeader>
+        <View className="flex flex-col gap-1 flex-1">
           <View className="flex-row">
             <CustomTextInput
               id="title"
@@ -49,19 +57,20 @@ const AddSong = () => {
               placeholder="Artist"
             />
           </View>
-          <ScrollView className="overflow-scroll flex-1" bounces={false}>
+          <View className="flex-1">
             <CustomTextInput
-              className="flex-1"
               id="lyrics"
-              placeholder="Paste the lyrics here :)"
+              className="h-full"
+              scrollEnabled={true}
+              placeholder="Add your own lyrics here :)"
               multiline
               numberOfLines={4}
               onChangeText={handleChange('lyrics')}
               onBlur={handleBlur('lyrics')}
               value={values.lyrics}
             />
-          </ScrollView>
-          <View className="mb-16 flex flex-row">
+          </View>
+          <View className="mb-8 flex flex-row">
             <View className="w-1/2">
               <Button
                 disabled={isSubmitting}
@@ -83,4 +92,4 @@ const AddSong = () => {
   );
 };
 
-export default AddSong;
+export default NewSongForm;

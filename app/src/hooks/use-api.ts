@@ -1,5 +1,5 @@
 import { SUPER_SECRET_KEY, API_URL } from '@env';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSongStore } from '../store';
 import { z } from 'zod';
 
@@ -95,4 +95,58 @@ export const useSyncFromServer = () => {
   };
 
   return { syncFromServer, syncState };
+};
+
+const validateSongSearchResult = z.object({
+  title: z.string(),
+  artists: z.string(),
+  url: z.string(),
+  thumbnail: z.string(),
+});
+
+export type SongSearchResult = z.infer<typeof validateSongSearchResult>;
+
+const searchUrl = `${songsURL}/search/`;
+
+export const useSongSearch = () => {
+  const [searchResults, setSearchResults] = useState<SongSearchResult[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const sendSearchQuery = useCallback((query: string) => {
+    if (query) {
+      const url = `${searchUrl}?q=${encodeURIComponent(query)}`;
+      fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPER_SECRET_KEY}`,
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            response
+              .text()
+              .then(text => console.error('Search query response text:', text));
+            throw new Error(
+              `Search query request failed with status ${response.status}`
+            );
+          }
+          return response.json();
+        })
+        .then(results => {
+          setSearchResults(validateSongSearchResult.array().parse(results));
+        })
+        .catch(error => {
+          console.error('Error fetching search results:', error);
+          setErrorMessage(error.message);
+          setSearchResults([]);
+        });
+    } else {
+      setSearchResults([]);
+    }
+  }, []);
+
+  const resetSearchResults = useCallback(() => {
+    setSearchResults([]);
+  }, []);
+
+  return { searchResults, errorMessage, sendSearchQuery, resetSearchResults };
 };

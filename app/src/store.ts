@@ -29,7 +29,7 @@ type SongStore = {
   setMidiInput: (input?: MIDIInputWithListeners) => void;
 };
 
-type NewSong = {
+export type NewSong = {
   title: string;
   artist: string;
   lyrics: string;

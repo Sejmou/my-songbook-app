@@ -29,3 +29,11 @@ export const RegularText = ({ additionalClassNames, children }: Props) => {
     </Text>
   );
 };
+
+export const SmallText = ({ additionalClassNames, children }: Props) => {
+  return (
+    <Text className={classNames('text-sm', additionalClassNames)}>
+      {children}
+    </Text>
+  );
+};
