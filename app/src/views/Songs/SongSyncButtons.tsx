@@ -1,7 +1,7 @@
 import { View } from 'react-native';
-import { useSyncToServer, useSyncFromServer } from '../hooks/use-api';
-import { RegularText } from './typography';
-import IconButton from './IconButton';
+import { useSyncToServer, useSyncFromServer } from '../../hooks/use-api';
+import { RegularText } from '../../components/typography';
+import IconButton from '../../components/IconButton';
 
 const SongSyncButtons = () => {
   const { syncToServer, syncState: uploadStatus } = useSyncToServer();

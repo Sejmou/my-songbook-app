@@ -1,10 +1,10 @@
 import classNames from 'classnames';
-import { useSongStore } from '../store';
+import { useSongStore } from '../../store';
 import { View, Text, TouchableOpacity, Dimensions, Button } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import SongList from '../components/SongList';
-import SongSyncButtons from '../components/SongSyncButtons';
-import { MainHeading } from '../components/typography';
+import { MainHeading } from '../../components/typography';
+import SongList from './SongList';
+import SongSyncButtons from './SongSyncButtons';
 
 const Songs = () => {
   const setCurrentView = useSongStore(state => state.setCurrentView);

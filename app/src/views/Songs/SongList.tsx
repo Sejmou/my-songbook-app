@@ -1,10 +1,8 @@
 import classNames from 'classnames';
-import { useSongStore, type Song } from '../store';
+import { useSongStore, type Song } from '../../store';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { View, TouchableOpacity, Alert, Text, ScrollView } from 'react-native';
-import { RegularText } from './typography';
-import { useSyncToServer, useSyncFromServer } from '../hooks/use-api';
-import IconButton from './IconButton';
+import { RegularText } from '../../components/typography';
 
 type Props = {
   className?: string;
