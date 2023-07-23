@@ -2,9 +2,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useCurrentSong, useSongStore } from '../store';
 import CheckboxInput from '../components/CheckboxInput';
 import {
-  Button,
   FlatList,
-  ScrollView,
   Text,
   View,
   ViewToken,
@@ -15,6 +13,7 @@ import { MainHeading, RegularText, SubHeading } from '../components/typography';
 import classNames from 'classnames';
 import PageHeader from '../components/PageHeader';
 import MIDIScroll from '../components/MIDIScroll';
+import IconButton from '../components/IconButton';
 
 type Props = {
   className?: string;
@@ -116,13 +115,13 @@ const CurrentSong = (props: Props) => {
       <View className="mt-4 flex flex-row justify-between">
         <SectionHeadingsCheckbox />
         <View className="flex flex-row">
-          <Button
-            onPress={scrollPreviousInvisibleBlockIntoView}
-            title="Next Section"
-          />
-          <Button
+          <IconButton
+            iconName="arrow-down"
             onPress={scrollNextInvisibleBlockIntoView}
-            title="Previous Section"
+          />
+          <IconButton
+            iconName="arrow-up"
+            onPress={scrollPreviousInvisibleBlockIntoView}
           />
         </View>
       </View>
