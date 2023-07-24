@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useSongStore, type Song } from '../../store/songs';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { View, TouchableOpacity, Alert, Text, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { RegularText } from '../../components/typography';
 
 type Props = {
@@ -96,6 +96,7 @@ const SongListItem = ({
   return (
     <TouchableOpacity
       onPress={() => handleSongPress(song.id)}
+      delayPressIn={50} // to not highlight immediately while only scrolling
       className="flex flex-row items-center p-2"
     >
       <View className="flex-1">

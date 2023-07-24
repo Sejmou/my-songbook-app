@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
 import Constants from 'expo-constants';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { useSongStore } from './store/songs';
 import Songs from './views/Songs';
 import CurrentSong from './views/CurrentSong';
@@ -34,6 +34,7 @@ export default function App() {
       className="mx-4 flex flex-col"
       style={{
         marginTop: Constants.statusBarHeight + 4,
+        paddingBottom: Platform.OS === 'ios' ? 16 : 0, // otherwise the bottom of the content is too close to the thingy at the bottom of the screen (for app switching etc.)
       }}
     >
       <StatusBar style="auto" />

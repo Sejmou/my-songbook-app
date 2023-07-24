@@ -39,6 +39,7 @@ const AddSong = () => {
           resetForm();
         }}
         onCancel={() => setCurrentView('songs')}
+        variant="add"
       />
     </View>
   );

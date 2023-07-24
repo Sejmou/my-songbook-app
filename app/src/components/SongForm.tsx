@@ -14,9 +14,15 @@ type FormProps = {
   initialValues?: Song;
   onSubmit: (values: Song, helpers: FormikHelpers<Song>) => void;
   onCancel: () => void;
+  variant: 'add' | 'edit';
 };
 
-const SongForm = ({ initialValues, onSubmit, onCancel }: FormProps) => {
+const SongForm = ({
+  initialValues,
+  onSubmit,
+  onCancel,
+  variant,
+}: FormProps) => {
   const [rerenderHackKey, setRerenderHackKey] = useState(0);
 
   useEffect(() => {
@@ -40,25 +46,20 @@ const SongForm = ({ initialValues, onSubmit, onCancel }: FormProps) => {
     >
       {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <View className="flex flex-col gap-1 flex-1">
-          <View className="flex-row">
-            <CustomTextInput
-              id="title"
-              className="flex-1"
-              onChangeText={handleChange('title')}
-              onBlur={handleBlur('title')}
-              value={values.title}
-              placeholder="Title"
-            />
-            <View className="w-1"></View>
-            <CustomTextInput
-              id="artist"
-              className="flex-1"
-              onChangeText={handleChange('artist')}
-              onBlur={handleBlur('artist')}
-              value={values.artist}
-              placeholder="Artist"
-            />
-          </View>
+          <CustomTextInput
+            id="title"
+            onChangeText={handleChange('title')}
+            onBlur={handleBlur('title')}
+            value={values.title}
+            placeholder="Title"
+          />
+          <CustomTextInput
+            id="artist"
+            onChangeText={handleChange('artist')}
+            onBlur={handleBlur('artist')}
+            value={values.artist}
+            placeholder="Artist"
+          />
           <View className="flex-1">
             <CustomTextInput
               id="lyrics"
@@ -72,12 +73,12 @@ const SongForm = ({ initialValues, onSubmit, onCancel }: FormProps) => {
               value={values.lyrics}
             />
           </View>
-          <View className="pt-2 pb-8 flex flex-row">
+          <View className="pt-2 flex flex-row">
             <View className="flex-1">
               <Button
                 disabled={isSubmitting}
                 onPress={handleSubmit as any}
-                title="Add"
+                title={variant === 'add' ? 'Add' : 'Save'}
               />
             </View>
             <View className="w-2"></View>

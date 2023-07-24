@@ -26,6 +26,7 @@ const EditSong = () => {
         <MainHeading>Edit song</MainHeading>
       </PageHeader>
       <SongForm
+        variant="edit"
         initialValues={{
           title: currentSong.title,
           artist: currentSong.artist,

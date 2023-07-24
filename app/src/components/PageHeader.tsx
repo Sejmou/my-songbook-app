@@ -20,7 +20,7 @@ const PageHeader = ({ children }: Props) => {
           <Ionicons name="md-arrow-back-outline" size={32} color="gray" />
         </View>
       </TouchableOpacity>
-      {children}
+      <View className="flex-1">{children}</View>
     </View>
   );
 };
