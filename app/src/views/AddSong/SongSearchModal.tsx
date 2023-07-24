@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Constants from 'expo-constants';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import CustomTextInput from '../../components/CustomTextInput';
 import {
   MainHeading,
@@ -15,7 +15,7 @@ import {
   SmallText,
 } from '../../components/typography';
 import { useSongSearch, type SongSearchResult } from '../../hooks/use-api';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import IconButton from '../../components/IconButton';
 import { fetchAndExtractLyrics } from '../../hooks/use-genius-lyrics';
 
@@ -29,6 +29,14 @@ type SelectedSong = {
   title: string;
   artist: string;
   lyrics: string;
+};
+
+type SongSearch = {
+  query: string;
+};
+
+const initialSongSearchValue: SongSearch = {
+  query: '',
 };
 
 const SongSearchModal = ({
@@ -60,28 +68,23 @@ const SongSearchModal = ({
         }}
       >
         <MainHeading>Search for a Song</MainHeading>
-        <Formik
-          initialValues={{ query: '' }}
-          onSubmit={values => {
-            if (!values.query) {
-              return;
-            }
-            console.log('searching for:', values.query);
-            sendSearchQuery(values.query);
-          }}
-        >
-          {({ values, handleChange, handleBlur, handleSubmit }) => (
+        <Formik initialValues={initialSongSearchValue} onSubmit={() => {}}>
+          {({ values, handleChange, handleBlur }) => (
             <View className="flex-row">
+              <IconButton iconName="arrow-back" onPress={onRequestClose} />
               <CustomTextInput
                 id="title"
                 className="flex-1"
                 onChangeText={handleChange('query')}
                 onBlur={handleBlur('query')}
                 value={values.query}
-                placeholder="Query"
+                placeholder="Search Genius.com"
               />
               <View className="w-1"></View>
-              <IconButton iconName="search" onPress={handleSubmit} />
+              <TriggerSearch
+                onSearch={query => sendSearchQuery(query)}
+                onSearchReset={resetSearchResults}
+              />
             </View>
           )}
         </Formik>
@@ -109,10 +112,26 @@ const SongSearchModal = ({
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <Button title="Close" onPress={onRequestClose} />
       </View>
     </Modal>
   );
+};
+
+type SearchProps = {
+  onSearch(query: string): void;
+  onSearchReset(): void;
+};
+
+const TriggerSearch = ({ onSearch, onSearchReset }: SearchProps) => {
+  const { values } = useFormikContext<SongSearch>();
+  useEffect(() => {
+    if (values.query.length > 2) {
+      onSearch(values.query);
+    } else {
+      onSearchReset();
+    }
+  }, [values]);
+  return null;
 };
 
 export default SongSearchModal;

@@ -3,8 +3,8 @@ import SongSearchModal from './SongSearchModal';
 import { MainHeading } from '../../components/typography';
 import PageHeader from '../../components/PageHeader';
 import { useState } from 'react';
-import NewSongForm from './NewSongForm';
-import type { NewSong } from '../../store';
+import SongForm from '../../components/SongForm';
+import { useSongStore, type NewSong } from '../../store/songs';
 
 const AddSong = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -12,6 +12,8 @@ const AddSong = () => {
     setModalVisible(true);
   };
   const [songFromGenius, setSongFromGenius] = useState<NewSong | undefined>();
+  const addSong = useSongStore(state => state.addSong);
+  const setCurrentView = useSongStore(state => state.setCurrentView);
 
   return (
     <View className="flex h-full">
@@ -25,8 +27,19 @@ const AddSong = () => {
           setSongFromGenius(song);
         }}
       />
-      <Button title="Search on Genius.com" onPress={handleSearchButtonClick} />
-      <NewSongForm initialValues={songFromGenius} />
+      <View className="my-2">
+        <Button title="Find on Genius.com" onPress={handleSearchButtonClick} />
+      </View>
+      <SongForm
+        initialValues={songFromGenius}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          addSong(values);
+          setSubmitting(false);
+          setCurrentView('songs');
+          resetForm();
+        }}
+        onCancel={() => setCurrentView('songs')}
+      />
     </View>
   );
 };

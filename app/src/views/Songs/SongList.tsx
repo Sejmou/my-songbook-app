@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useSongStore, type Song } from '../../store';
+import { useSongStore, type Song } from '../../store/songs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { View, TouchableOpacity, Alert, Text, ScrollView } from 'react-native';
 import { RegularText } from '../../components/typography';

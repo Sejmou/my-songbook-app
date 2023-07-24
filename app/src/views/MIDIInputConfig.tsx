@@ -1,4 +1,4 @@
-import { useSongStore } from '../store';
+import { useSongStore } from '../store/songs';
 import { Text, View } from 'react-native';
 import SelectInput from '../components/SelectInput';
 import { useMIDI } from '../hooks/midi/use-midi';

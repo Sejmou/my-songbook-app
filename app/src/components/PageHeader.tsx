@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { useSongStore } from '../store';
+import { useSongStore } from '../store/songs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 type Props = {

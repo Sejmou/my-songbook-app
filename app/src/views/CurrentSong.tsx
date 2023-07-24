@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useCurrentSong, useSongStore } from '../store';
+import { useCurrentSong, useSongStore } from '../store/songs';
 import CheckboxInput from '../components/CheckboxInput';
 import {
   FlatList,

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MIDIInputWithListeners } from './hooks/midi/midi-input';
+import { MIDIInputWithListeners } from '../hooks/midi/midi-input';
 
 type ViewName =
   | 'songs'

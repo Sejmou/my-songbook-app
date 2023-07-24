@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
 import Constants from 'expo-constants';
 import { View } from 'react-native';
-import { useSongStore } from './store';
+import { useSongStore } from './store/songs';
 import Songs from './views/Songs';
 import CurrentSong from './views/CurrentSong';
 import MIDIInputConfig from './views/MIDIInputConfig';

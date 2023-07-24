@@ -1,6 +1,6 @@
 import { SUPER_SECRET_KEY, API_URL } from '@env';
 import { useCallback, useEffect, useState } from 'react';
-import { useSongStore } from '../store';
+import { useSongStore } from '../store/songs';
 import { z } from 'zod';
 
 const songsURL = `${API_URL}songs`;

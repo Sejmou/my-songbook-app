@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react';
 import { View, Button, Alert } from 'react-native';
-import { Formik } from 'formik';
-import CustomTextInput from '../../components/CustomTextInput';
-import { useSongStore } from '../../store';
-import type { NewSong } from '../../store';
+import { Formik, FormikHelpers } from 'formik';
+import CustomTextInput from './CustomTextInput';
+import { useSongStore } from '../store/songs';
 
-type FormProps = {
-  initialValues?: NewSong;
+type Song = {
+  title: string;
+  artist: string;
+  lyrics: string;
 };
 
-const NewSongForm = ({ initialValues }: FormProps) => {
-  const addSong = useSongStore(state => state.addSong);
-  const setCurrentView = useSongStore(state => state.setCurrentView);
+type FormProps = {
+  initialValues?: Song;
+  onSubmit: (values: Song, helpers: FormikHelpers<Song>) => void;
+  onCancel: () => void;
+};
 
+const SongForm = ({ initialValues, onSubmit, onCancel }: FormProps) => {
   const [rerenderHackKey, setRerenderHackKey] = useState(0);
 
   useEffect(() => {
@@ -24,16 +28,14 @@ const NewSongForm = ({ initialValues }: FormProps) => {
     <Formik
       key={rerenderHackKey}
       initialValues={initialValues || { title: '', artist: '', lyrics: '' }}
-      onSubmit={(values, { setSubmitting, resetForm }) => {
+      onSubmit={(values, helpers) => {
+        const { setSubmitting } = helpers;
         if (!values.title || !values.artist || !values.lyrics) {
           Alert.alert('Please fill out all fields!');
           setSubmitting(false);
           return;
         }
-        addSong(values);
-        setSubmitting(false);
-        setCurrentView('songs');
-        resetForm();
+        onSubmit(values, helpers);
       }}
     >
       {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
@@ -70,20 +72,17 @@ const NewSongForm = ({ initialValues }: FormProps) => {
               value={values.lyrics}
             />
           </View>
-          <View className="mb-8 flex flex-row">
-            <View className="w-1/2">
+          <View className="pt-2 pb-8 flex flex-row">
+            <View className="flex-1">
               <Button
                 disabled={isSubmitting}
                 onPress={handleSubmit as any}
                 title="Add"
               />
             </View>
-            <View className="w-1/2">
-              <Button
-                onPress={() => setCurrentView('songs')}
-                title="Cancel"
-                color="red"
-              />
+            <View className="w-2"></View>
+            <View className="flex-1">
+              <Button onPress={onCancel} title="Cancel" color="red" />
             </View>
           </View>
         </View>
@@ -92,4 +91,4 @@ const NewSongForm = ({ initialValues }: FormProps) => {
   );
 };
 
-export default NewSongForm;
+export default SongForm;
